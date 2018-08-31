@@ -29,7 +29,12 @@ namespace monopoly
     /// </summary>
     public class Game
     {
+        public Player[] Players { get; set; }
 
+        public Game ()
+        {
+
+        }
     }
 
     /// <summary>
