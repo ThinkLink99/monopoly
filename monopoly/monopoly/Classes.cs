@@ -90,11 +90,29 @@
         protected short rr = 0, utils = 0;
         protected Property[] properties = new Property[27];
 
+        /// <summary>
+        /// THe Name of the Player, Used for identification in-game
+        /// </summary>
         public string Name { get { return name; } }
+        /// <summary>
+        /// The integer amount of cash this player has
+        /// </summary>
         public int Cash { get { return cash; } }
+        /// <summary>
+        /// The current tile the player is at on the board.
+        /// </summary>
         public short Space { get { return space; } }
+        /// <summary>
+        /// The Int16 amount of railroads this plyer owns
+        /// </summary>
         public short Railroads { get { return rr; } }
+        /// <summary>
+        /// the Int16 amount of Utilities this player owns.
+        /// </summary>
         public short Utilities { get { return utils; } }
+        /// <summary>
+        /// An Array of all properties this player owns
+        /// </summary>
         public Property[] Properties { get { return properties; } }
 
         /// <summary>
