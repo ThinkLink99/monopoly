@@ -368,12 +368,21 @@
 
         public string Name { get { return name; } }
         public Colors Color { get { return color; } }
+        /// <summary>
+        /// The cost of buying the property from the bank
+        /// </summary>
         public int Cost { get { return cost; } }
 
+        /// <summary>
+        /// The cost of buying one house on this property
+        /// </summary>
         public int House_Cost { get { return house_cost; } }
         public short TotalHouses { get { return num_houses; } }
         public short TotalHotels { get { return num_hotels; } }
 
+        /// <summary>
+        /// Boolean Flag declaring whether or not a property has been monopolied, all properties of the same color are owned.
+        /// </summary>
         public bool Monopolied { get; set; }
 
         /// <summary>
@@ -402,6 +411,10 @@
             house_cost = _cost_house;
         }
 
+        /// <summary>
+        /// Rent, with no parameters, will check for a monopoly and number of houses to determine rent
+        /// </summary>
+        /// <returns></returns>
         public int Rent()
         {
             if (Monopolied)
@@ -413,10 +426,21 @@
             // If the code made it this far, the property has no houses or hotels, normal rent
             return rent;
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="roll"></param>
+        /// <param name="utils"></param>
+        /// <returns></returns>
         public int Rent(short roll, short utils)
         {
             return UtilityRent(roll, utils);
         }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="rr"></param>
+        /// <returns></returns>
         public int Rent(short rr)
         {
             return RailroadRent(rr);
