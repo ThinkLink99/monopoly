@@ -1,5 +1,8 @@
 ﻿namespace monopoly
 {
+    /// <summary>
+    /// Colors is the property colors in game, including railroads and utilities
+    /// </summary>
     public enum Colors
     {
         Brown,
@@ -19,15 +22,29 @@
     /// </summary>
     public class Game
     {
+        const short MAX_PLAYERS = 8;
         const int STARTING_BANK = 20000; // Bank only has 20,000 in it
 
         protected int bank = 20000;
 
+        /// <summary>
+        /// The current amount of money in the game Bank. Bank starts with 20,000 dollars in it.
+        /// </summary>
         public int Bank { get { return bank; } }
 
+        /// <summary>
+        /// An array of all players in the game
+        /// </summary>
         public Player[] Players { get; set; }
+        /// <summary>
+        /// An array of all properties still owned by the bank
+        /// </summary>
         public Property[] Properties { get; set; }
 
+        void get_players ()
+        {
+            Players = new Player[MAX_PLAYERS];
+        }
         void replenish_bank ()
         {
             bank = STARTING_BANK;
@@ -44,25 +61,45 @@
             }
         }
 
+        public Game()
+        {
+            NewGame();
+        }
+
         public void NewGame()
         {
+            get_players();
             replenish_bank();
             pay_starting_cash();
         }
 
+        /// <summary>
+        /// BankPayout will subtract money from the bank total
+        /// </summary>
+        /// <param name="amount_out">The amount the bank loses</param>
         public void BankPayout (int amount_out)
         {
             bank -= amount_out;
         }
+        /// <summary>
+        /// BankPayin will add money back into the bank total
+        /// </summary>
+        /// <param name="amount_in">The amount the bank recieves</param>
         public void BankPayin (int amount_in)
         {
             bank += amount_in;
         }
 
+        /// <summary>
+        /// GiveProperty will call the PLayer.BuyProperty function and set the index of the bank owned properties to null
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="player"></param>
         public void GiveProperty (Property property, Player player)
         {
             player.BuyProperty(property);
 
+            // Pay the bank
             BankPayin(property.Cost);
 
             int i = 0;
@@ -74,6 +111,31 @@
                 }
                 i++;
             }
+        }
+
+        public void DrawChance ()
+        {
+
+        }
+        public void DrawCommunityChest ()
+        {
+
+        }
+
+        /// <summary>
+        /// Roll takes two dice by reference, gives a random number between 1 and six on both, adds them up and returns the value
+        /// </summary>
+        /// <param name="die_1"></param>
+        /// <param name="die_2"></param>
+        /// <returns></returns>
+        public short Roll (ref short die_1, ref short die_2)
+        {
+            System.Random rand = new System.Random();
+
+            die_1 = (short)(rand.Next(6) + 1);
+            die_2 = (short)(rand.Next(6) + 1);
+
+            return (short)(die_1 + die_2);
         }
     }
 
@@ -136,6 +198,10 @@
             cash += amount;
         }
 
+        /// <summary>
+        /// BuyProperty subtracts the cost of the property from the player's current balance and then puts the property into the first null index in the array
+        /// </summary>
+        /// <param name="property"></param>
         public void BuyProperty(Property property)
         {
             // Pay the buying price for the property
@@ -155,21 +221,27 @@
             MonopolyCheck(property.Color);
         }
 
-        public void PayRent(Property property, Player player, short roll)
+        /// <summary>
+        /// PayRent will check if the tile that was landed was a railroad, utility, or regualr tile, then check for the rent modifers.  
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="property_owner"></param>
+        /// <param name="roll"></param>
+        public void PayRent(Property property, Player property_owner, short roll)
         {
             switch (property.Color)
             {
                 case Colors.Railroad:
-                    PayCash(property.Rent(player.Railroads));
-                    player.RecieveCash(property.Rent(player.Railroads));
+                    PayCash(property.Rent(property_owner.Railroads));
+                    property_owner.RecieveCash(property.Rent(property_owner.Railroads));
                     break;
                 case Colors.Utility:
-                    PayCash(property.Rent(roll, player.Utilities));
-                    player.RecieveCash(property.Rent(roll, player.Utilities));
+                    PayCash(property.Rent(roll, property_owner.Utilities));
+                    property_owner.RecieveCash(property.Rent(roll, property_owner.Utilities));
                     break;
                 default:
                     PayCash(property.Rent());
-                    player.RecieveCash(property.Rent());
+                    property_owner.RecieveCash(property.Rent());
                     break;
             }
         }
