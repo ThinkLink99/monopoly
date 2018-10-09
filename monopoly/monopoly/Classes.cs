@@ -1,21 +1,21 @@
-﻿namespace monopoly
+﻿using System;
+
+namespace monopoly
 {
     /// <summary>
     /// Colors is the property colors in game, including railroads and utilities
     /// </summary>
-    public enum Colors
-    {
-        Brown,
-        LightBlue,
-        Magenta,
-        Orange,
-        Red,
-        Yellow,
-        Green,
-        DarkBlue,
-        Railroad,
-        Utility
-    }
+    public enum Colors { Brown, LightBlue, Magenta, Orange, Red, Yellow, Green, DarkBlue, Railroad, Utility }
+    /// <summary>
+    /// Tokens is the player tokens that can be used in game
+    /// </summary>
+    public enum Tokens { NONE, DOG, CAT, HAT, CAR, THIMBLE, BOOT}
+    /// <summary>
+    /// CardType is the the type of cards the player could recieve in the game
+    /// </summary>
+    public enum CardType { CHANCE, COMMUNITY }
+
+    public enum TileType { PROPERTY, CHANCE, COMMUNITY, FREE_PARKING, GO_TO_JAIL, JAIL, TAX, GO}
 
     /// <summary>
     /// Game controls all functions the game handle, such as keeping track of players and properties
@@ -25,6 +25,7 @@
         const short MAX_PLAYERS = 8;
         const int STARTING_BANK = 20000; // Bank only has 20,000 in it
 
+        protected int current = 0;
         protected int bank = 20000;
 
         /// <summary>
@@ -40,6 +41,16 @@
         /// An array of all properties still owned by the bank
         /// </summary>
         public Property[] Properties { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public Card[] ChancePile { get; set; }
+        /// <summary>
+        /// 
+        /// </summary>
+        public Card[] CommunityChestPile { get; set; }
+
+        public Player CurrentPlayer { get { return Players[current]; } set { Players[current] = value; } }
 
         void get_players ()
         {
@@ -113,29 +124,88 @@
             }
         }
 
-        public void DrawChance ()
+        public Card DrawChance ()
         {
-
+            int i = 0;
+            foreach (Card chance in ChancePile)
+                if (chance != null)
+                {
+                    ChancePile[i] = null;
+                    return chance;
+                }
+                else
+                {
+                    i++;
+                }
+            return null;
         }
-        public void DrawCommunityChest ()
+        public Card DrawCommunityChest ()
         {
-
+            int i = 0;
+            foreach (Card CC in CommunityChestPile)
+                if (CC != null)
+                {
+                    CommunityChestPile[i] = null;
+                    return CC;
+                }
+                else
+                {
+                    i++;
+                }
+            return null;
         }
 
         /// <summary>
-        /// Roll takes two dice by reference, gives a random number between 1 and six on both, adds them up and returns the value
+        /// Roll takes two dice by reference, gives a random number between 1 and six on both, adds them up and returns the value. 
+        /// Dice are given to the function so that the value of each can be stored and checked for doubles.
         /// </summary>
         /// <param name="die_1"></param>
         /// <param name="die_2"></param>
         /// <returns></returns>
-        public short Roll (ref short die_1, ref short die_2)
+        public short Roll (ref Die die_1, ref Die die_2)
         {
-            System.Random rand = new System.Random();
+            die_1.Roll();
+            die_2.Roll();
 
-            die_1 = (short)(rand.Next(6) + 1);
-            die_2 = (short)(rand.Next(6) + 1);
+            return (short)(die_1.Value + die_2.Value);
+        }
 
-            return (short)(die_1 + die_2);
+        public bool IsOwnedProperty (ref Player property_owner, ref short property_index)
+        {
+            foreach (Player player in Players)
+            {
+                if (player != CurrentPlayer)
+                {
+                    short i = 0;
+                    foreach (Property property in player.Properties)
+                    {
+                        if (property.Space == CurrentPlayer.Space)
+                        {
+                            property_owner = player;
+                            property_index = i;
+                            return true;
+                        }
+                        i++;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool IsBankProperty()
+        {
+            for(int i = 0; i < Properties.Length; i++)
+            {
+                if (Properties[i].Space == CurrentPlayer.Space)
+                    return true;
+            }
+            return false;
+        }
+
+        public void NextPlayer ()
+        {
+            if (current++ >= Players.Length)
+                current = 0;
         }
     }
 
@@ -144,11 +214,12 @@
     /// Contains Cash balance, property list, and current board space index
     /// The Player class also contains methods to move cash and collect properties.
     /// </summary>
-    public class Player
+    public class Player : IDisposable
     {
         protected string name = "";
+        protected Tokens token = Tokens.NONE;
         protected int cash = 0;
-        protected short space = 0;
+        protected BoardSpace space;
         protected short rr = 0, utils = 0;
         protected Property[] properties = new Property[27];
 
@@ -157,13 +228,17 @@
         /// </summary>
         public string Name { get { return name; } }
         /// <summary>
+        /// 
+        /// </summary>
+        public Tokens Token { get { return token; } }
+        /// <summary>
         /// The integer amount of cash this player has
         /// </summary>
         public int Cash { get { return cash; } }
         /// <summary>
         /// The current tile the player is at on the board.
         /// </summary>
-        public short Space { get { return space; } }
+        public BoardSpace Space { get { return space; } }
         /// <summary>
         /// The Int16 amount of railroads this plyer owns
         /// </summary>
@@ -221,13 +296,25 @@
             MonopolyCheck(property.Color);
         }
 
+        public void RecieveProperties (Player recieving_from)
+        {
+            for (int j = 0; j < Properties.Length; j++)
+            {
+                if (Properties[j] == null)
+                {
+                    recieving_from.Properties.CopyTo(Properties, j);
+                }
+            }
+        }
+
         /// <summary>
         /// PayRent will check if the tile that was landed was a railroad, utility, or regualr tile, then check for the rent modifers.  
         /// </summary>
         /// <param name="property"></param>
         /// <param name="property_owner"></param>
         /// <param name="roll"></param>
-        public void PayRent(Property property, Player property_owner, short roll)
+        /// <returns>Returns false if the player is out of money</returns>
+        public bool PayRent(Property property, Player property_owner, short roll)
         {
             switch (property.Color)
             {
@@ -244,6 +331,9 @@
                     property_owner.RecieveCash(property.Rent());
                     break;
             }
+            if (Cash < 0)
+                return false;
+            else return true;
         }
 
         public void MonopolyCheck(Colors color)
@@ -294,16 +384,59 @@
                 Move((short)(spaces - 1));
             }
         }
+
+        public Player FileBankruptcy (Player bankrupter)
+        {
+            bankrupter.RecieveProperties(this);
+            Dispose();
+            return null;
+        }
+
+    #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~Player() {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 
     /// <summary>
     /// 
     /// </summary>
-    public class Property
+    public class Property 
     {
         protected Colors color;
 
         protected string name = "";
+        protected short space = 0;
         protected int cost = 0;
 
         protected int house_cost = 0;
@@ -316,6 +449,8 @@
         protected int three_house = 0;
         protected int four_house = 0;
         protected int hotel = 0;
+
+        protected bool mortaged = false;
 
         int RailroadRent(short rr)
         {
@@ -367,6 +502,7 @@
         }
 
         public string Name { get { return name; } }
+        public short Space { get { return space; } }
         public Colors Color { get { return color; } }
         /// <summary>
         /// The cost of buying the property from the bank
@@ -384,6 +520,8 @@
         /// Boolean Flag declaring whether or not a property has been monopolied, all properties of the same color are owned.
         /// </summary>
         public bool Monopolied { get; set; }
+
+        public bool Mortaged { get { return mortaged; } }
 
         /// <summary>
         /// Constructs a new Property object
@@ -463,6 +601,64 @@
                     num_hotels += num;
                     num_houses = 0;
                 }
+        }
+    }
+
+    public class Card
+    {
+        protected CardType type;
+        protected string description;
+
+        public CardType Type { get { return type; } }
+        public string Description { get { return description; } }
+    }
+
+    public class Die
+    {
+        protected short value;
+
+        public short Value { get { return value; } }
+
+        public void Roll ()
+        {
+            System.Random rand = new System.Random();
+
+            value = (short)(rand.Next(6) + 1);
+        }
+    }
+
+    public class BoardSpace
+    {
+        protected short index = 0;
+        protected TileType type;
+
+        public short Index { get { return index; } }
+        public TileType Type { get { return type; } }
+
+        public BoardSpace(TileType type, short index)
+        {
+            this.type = type;
+            this.index = index;
+        }
+    }
+
+    public class  PropertySpace : BoardSpace
+    {
+        protected string property_name = "";
+
+        public Property GetProperty(Game currentGame)
+        {
+            for(int i = 0; i < currentGame.Properties.Length; i++)
+            {
+                if (currentGame.Properties[i].Name == property_name)
+                    return currentGame.Properties[i];
+            }
+            return null;
+        }
+
+        public PropertySpace(short space_index, string property_name) : base (TileType.PROPERTY, space_index)
+        {
+            this.property_name = property_name;
         }
     }
 }
