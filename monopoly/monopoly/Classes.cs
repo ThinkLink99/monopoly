@@ -52,9 +52,13 @@ namespace monopoly
 
         public Player CurrentPlayer { get { return Players[current]; } set { Players[current] = value; } }
 
-        void get_players ()
+        void get_players (string[] player_names)
         {
             Players = new Player[MAX_PLAYERS];
+            for(int i = 0; i < player_names.Length; i++)
+            {
+                AddNewPlayer(player_names[i], i);
+            }
         }
         void replenish_bank ()
         {
@@ -64,24 +68,41 @@ namespace monopoly
         {
             foreach (Player player in Players)
             {
-                // give each player 1500 dollars
-                player.RecieveCash(1500);
+                if (player != null)
+                {
+                    // give each player 1500 dollars
+                    player.RecieveCash(1500);
 
-                // take that money from the bank, there should never be more or less than 20000 in play
-                BankPayout(1500);
+                    // take that money from the bank, there should never be more or less than 20000 in play
+                    BankPayout(1500);
+                }
             }
         }
-
-        public Game()
+        void build_board ()
         {
-            NewGame();
+            Board = new BoardSpace[36];
+            Board[0] = new BoardSpace(TileType.GO, 0);
+            Board[1] = new PropertySpace(1, "");
+            Board[2] = new PropertySpace(2, "");
+            Board[3] = new BoardSpace(TileType.TAX, 3);
+
         }
 
-        public void NewGame()
+        public Game(string[] player_names)
         {
-            get_players();
+            NewGame(player_names);
+        }
+
+        public void NewGame(string[] player_names)
+        {
+            get_players(player_names);
             replenish_bank();
             pay_starting_cash();
+        }
+
+        public void AddNewPlayer (string name, int index)
+        {
+            Players[index] = new Player(name);
         }
 
         /// <summary>
@@ -155,6 +176,8 @@ namespace monopoly
             return null;
         }
 
+        public BoardSpace[] Board { get; set; }
+
         /// <summary>
         /// Roll takes two dice by reference, gives a random number between 1 and six on both, adds them up and returns the value. 
         /// Dice are given to the function so that the value of each can be stored and checked for doubles.
@@ -179,7 +202,7 @@ namespace monopoly
                     short i = 0;
                     foreach (Property property in player.Properties)
                     {
-                        if (property.Space == CurrentPlayer.Space)
+                        if (property.Space == CurrentPlayer.Space.Index)
                         {
                             property_owner = player;
                             property_index = i;
@@ -196,7 +219,7 @@ namespace monopoly
         {
             for(int i = 0; i < Properties.Length; i++)
             {
-                if (Properties[i].Space == CurrentPlayer.Space)
+                if (Properties[i].Space == CurrentPlayer.Space.Index)
                     return true;
             }
             return false;
@@ -260,8 +283,7 @@ namespace monopoly
         {
             name = _name;
 
-            cash = 1500;
-            space = 0;
+            cash = 0;
         }
 
         public void PayCash(int amount)
@@ -366,22 +388,23 @@ namespace monopoly
             }
         }
 
-        public void Move(short spaces)
+        public void Move(short spaces, Game game)
         {
             if (spaces > 0)
             {
-                // increase space
-                space++;
-
                 // if it is more than 36 (or maximum spaces in one go around)
-                if (space > 36)
+                if (space.Index == 36)
                 {
                     // reset it to 0
-                    space = 0;
+                    space.Index = 0;
+                }
+                else { 
+                    // increase space
+                    space = game.Board[space.Index + 1];
                 }
 
                 // move again
-                Move((short)(spaces - 1));
+                Move((short)(spaces - 1), game);
             }
         }
 
@@ -632,7 +655,7 @@ namespace monopoly
         protected short index = 0;
         protected TileType type;
 
-        public short Index { get { return index; } }
+        public short Index { get { return index; } set { index = value; } }
         public TileType Type { get { return type; } }
 
         public BoardSpace(TileType type, short index)

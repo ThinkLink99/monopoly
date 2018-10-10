@@ -32,7 +32,7 @@ namespace monopoly
         }
         void new_game()
         {
-            game = new Game();
+            //game = new Game();
         }
 
         void take_turn ()
@@ -53,8 +53,6 @@ namespace monopoly
             short index = 0;
             if (game.CurrentPlayer.Space.Type == TileType.PROPERTY)
             {
-                ((PropertySpace)game.CurrentPlayer.Space).GetProperty(game);
-
                 if (game.IsOwnedProperty(ref property_owner, ref index))
                 {
                     if (!property_owner.Properties[index].Monopolied)
@@ -65,7 +63,9 @@ namespace monopoly
                 {
                     // would the player like to buy the property?
                     // if yes
-                    game.CurrentPlayer.BuyProperty()
+                    Property property = ((PropertySpace)game.CurrentPlayer.Space).GetProperty(game);
+                    game.CurrentPlayer.BuyProperty(property);
+                    game.GiveProperty(property, game.CurrentPlayer);
                 }
             }
             
