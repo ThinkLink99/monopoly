@@ -61,7 +61,7 @@ namespace monopoly
             short roll = game.Roll(ref die_1, ref die_2);
 
             // move spaces
-            game.CurrentPlayer.Move(roll);
+            game.CurrentPlayer.Move(roll, game);
 
             // check what the current tile is
 

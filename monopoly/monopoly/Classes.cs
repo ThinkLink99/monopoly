@@ -80,12 +80,65 @@ namespace monopoly
         }
         void build_board ()
         {
-            Board = new BoardSpace[36];
+            Board = new BoardSpace[40];
+
+            // first side
             Board[0] = new BoardSpace(TileType.GO, 0);
             Board[1] = new PropertySpace(1, "");
-            Board[2] = new PropertySpace(2, "");
-            Board[3] = new BoardSpace(TileType.TAX, 3);
+            Board[2] = new BoardSpace(TileType.COMMUNITY, 2);
+            Board[3] = new PropertySpace(2, "");
+            Board[4] = new BoardSpace(TileType.TAX, 3);
+            Board[5] = new PropertySpace(4, "Railroad");
+            Board[6] = new PropertySpace(6, "");
+            Board[7] = new BoardSpace(TileType.CHANCE, 7);
+            Board[8] = new PropertySpace(8, "");
+            Board[9] = new PropertySpace(9, "");
+            Board[10] = new BoardSpace(TileType.JAIL, 10);
 
+            //second side
+            Board[11] = new PropertySpace(11, "");
+            Board[12] = new PropertySpace(12, "Electric");
+            Board[13] = new PropertySpace(13, "");
+            Board[14] = new PropertySpace(14, "");
+            Board[15] = new PropertySpace(15, "Railroad");
+            Board[16] = new PropertySpace(16, "");
+            Board[17] = new BoardSpace(TileType.COMMUNITY, 17);
+            Board[18] = new PropertySpace(18, "");
+            Board[19] = new PropertySpace(19, "");
+            Board[20] = new BoardSpace(TileType.JAIL, 20);
+
+            // third side
+            Board[21] = new PropertySpace(11, "");
+            Board[22] = new BoardSpace(TileType.COMMUNITY, 17);
+            Board[23] = new PropertySpace(13, "");
+            Board[24] = new PropertySpace(14, "");
+            Board[25] = new PropertySpace(15, "Railroad");
+            Board[26] = new PropertySpace(16, "");
+            Board[27] = new PropertySpace(18, "");
+            Board[28] = new PropertySpace(12, "Water");
+            Board[29] = new PropertySpace(19, "");
+            Board[30] = new BoardSpace(TileType.GO_TO_JAIL, 20);
+
+            // fourth side
+            Board[31] = new PropertySpace(8, "");
+            Board[32] = new PropertySpace(9, "");
+            Board[33] = new BoardSpace(TileType.COMMUNITY, 7);
+            Board[34] = new PropertySpace(6, "");
+            Board[35] = new PropertySpace(4, "Railroad");
+            Board[36] = new BoardSpace(TileType.CHANCE, 7);
+            Board[37] = new PropertySpace(1, "");
+            Board[38] = new BoardSpace(TileType.TAX, 3);
+            Board[39] = new PropertySpace(2, "");
+        }
+        void place_players_on_board()
+        {
+            foreach(Player player in Players)
+            {
+                if (player != null)
+                {
+                    player.Space = Board[0];
+                }
+            }
         }
 
         public Game(string[] player_names)
@@ -98,6 +151,8 @@ namespace monopoly
             get_players(player_names);
             replenish_bank();
             pay_starting_cash();
+            build_board();
+            place_players_on_board();
         }
 
         public void AddNewPlayer (string name, int index)
@@ -261,7 +316,7 @@ namespace monopoly
         /// <summary>
         /// The current tile the player is at on the board.
         /// </summary>
-        public BoardSpace Space { get { return space; } }
+        public BoardSpace Space { get { return space; } set { space = value; } }
         /// <summary>
         /// The Int16 amount of railroads this plyer owns
         /// </summary>
