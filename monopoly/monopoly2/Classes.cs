@@ -342,6 +342,7 @@ namespace monopoly2
         protected BoardSpace space;
         protected short rr = 0, utils = 0;
         protected Property[] properties = new Property[27];
+        protected bool jailed = false;
 
         /// <summary>
         /// THe Name of the Player, Used for identification in-game
@@ -371,6 +372,17 @@ namespace monopoly2
         /// An Array of all properties this player owns
         /// </summary>
         public Property[] Properties { get { return properties; } }
+
+        public bool IsInJail { get { return jailed; } }
+
+        public void GoToJail ()
+        {
+            jailed = true;
+        }
+        public void GetOutOfJail ()
+        {
+            jailed = false;
+        }
 
         /// <summary>
         /// Initializes a new Player object with a given name, 1500 cash, and starting index of 0
