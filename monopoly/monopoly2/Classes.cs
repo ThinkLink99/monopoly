@@ -58,7 +58,8 @@ namespace monopoly2
             Players = new Player[MAX_PLAYERS];
             for(int i = 0; i < player_names.Length; i++)
             {
-                AddNewPlayer(player_names[i], i);
+                if (player_names[i] != "")
+                    AddNewPlayer(player_names[i], i);
             }
         }
         void get_properties()
@@ -797,7 +798,7 @@ namespace monopoly2
         {
             for(int i = 0; i < currentGame.Properties.Length; i++)
             {
-                if (currentGame.Properties[i].Name == property_name)
+                if (currentGame.Properties[i] != null && (currentGame.Properties[i].Name == property_name))
                     return currentGame.Properties[i];
             }
             return null;

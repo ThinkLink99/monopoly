@@ -37,6 +37,7 @@ namespace monopoly2
                 {
                     print_to_console("Enter Player " + (i + 1).ToString() + "'s name.");
                     read_from_console(ref players[i]);
+                    if (players[i] == "") players[i] = null;
                 }
 
                 print_to_console("Starting game with these players...");
@@ -62,15 +63,19 @@ namespace monopoly2
                 do
                 {
                     clear_console();
-                    start_turn();
-                    take_turn();
-                    end_turn();
+                    if (game.CurrentPlayer.Name != "")
+                    {
+                        start_turn();
+                        take_turn();
+                        end_turn();
 
-                    print_to_console("Press any key to continue...");
-                    Console.ReadKey();
+                        print_to_console("Press any key to continue...");
+                        Console.ReadKey();
 
-                    players_remaining = get_number_of_players_left();
-                    // loop through taking turns until only one person is left in the game.
+                        players_remaining = get_number_of_players_left();
+                        // loop through taking turns until only one person is left in the game.
+                    }
+
                 } while (players_remaining > 1);
                 print_to_console("Play Again? [Y/N]: ");
                 play_again = Console.ReadLine();
