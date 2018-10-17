@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace monopoly2
 {
@@ -66,24 +67,30 @@ namespace monopoly2
             {
                 new Property("prop1", Colors.Brown, 0,0,0,0,0,0,0,0),
                 new Property("prop2", Colors.Brown, 0,0,0,0,0,0,0,0),
+                new Property("rr1", Colors.Railroad, 0,0,0,0,0,0,0,0),
                 new Property("prop3", Colors.LightBlue, 0,0,0,0,0,0,0,0),
                 new Property("prop4", Colors.LightBlue, 0,0,0,0,0,0,0,0),
                 new Property("prop5", Colors.LightBlue, 0,0,0,0,0,0,0,0),
                 new Property("prop6", Colors.Magenta, 0,0,0,0,0,0,0,0),
+                new Property("util1", Colors.Utility, 0,0,0,0,0,0,0,0),
                 new Property("prop7", Colors.Magenta, 0,0,0,0,0,0,0,0),
                 new Property("prop8", Colors.Magenta, 0,0,0,0,0,0,0,0),
+                new Property("rr2", Colors.Railroad, 0,0,0,0,0,0,0,0),
                 new Property("prop9", Colors.Orange, 0,0,0,0,0,0,0,0),
                 new Property("prop10", Colors.Orange, 0,0,0,0,0,0,0,0),
                 new Property("prop11", Colors.Orange, 0,0,0,0,0,0,0,0),
                 new Property("prop12", Colors.Red, 0,0,0,0,0,0,0,0),
                 new Property("prop13", Colors.Red, 0,0,0,0,0,0,0,0),
                 new Property("prop14", Colors.Red, 0,0,0,0,0,0,0,0),
+                new Property("rr3", Colors.Railroad, 0,0,0,0,0,0,0,0),
                 new Property("prop15", Colors.Yellow, 0,0,0,0,0,0,0,0),
                 new Property("prop16", Colors.Yellow, 0,0,0,0,0,0,0,0),
+                new Property("util2", Colors.Utility, 0,0,0,0,0,0,0,0),
                 new Property("prop17", Colors.Yellow, 0,0,0,0,0,0,0,0),
                 new Property("prop18", Colors.Green, 0,0,0,0,0,0,0,0),
                 new Property("prop19", Colors.Green, 0,0,0,0,0,0,0,0),
                 new Property("prop20", Colors.Green, 0,0,0,0,0,0,0,0),
+                new Property("rr4", Colors.Railroad, 0,0,0,0,0,0,0,0),
                 new Property("prop21", Colors.DarkBlue, 0,0,0,0,0,0,0,0),
                 new Property("prop22", Colors.DarkBlue, 0,0,0,0,0,0,0,0),
         };
@@ -112,51 +119,51 @@ namespace monopoly2
 
             // first side
             Board[0] = new BoardSpace(TileType.GO, 0);
-            Board[1] = new PropertySpace(1, "");
+            Board[1] = new PropertySpace(1, Properties[0].Name, this);
             Board[2] = new BoardSpace(TileType.COMMUNITY, 2);
-            Board[3] = new PropertySpace(3, "");
+            Board[3] = new PropertySpace(3, Properties[1].Name, this);
             Board[4] = new BoardSpace(TileType.TAX, 4);
-            Board[5] = new PropertySpace(5, "Railroad");
-            Board[6] = new PropertySpace(6, "");
+            Board[5] = new PropertySpace(5, Properties[2].Name, this);
+            Board[6] = new PropertySpace(6, Properties[3].Name, this);
             Board[7] = new BoardSpace(TileType.CHANCE, 7);
-            Board[8] = new PropertySpace(8, "");
-            Board[9] = new PropertySpace(9, "");
+            Board[8] = new PropertySpace(8, Properties[4].Name, this);
+            Board[9] = new PropertySpace(9, Properties[5].Name, this);
             Board[10] = new BoardSpace(TileType.JAIL, 10);
 
             //second side
-            Board[11] = new PropertySpace(11, "");
-            Board[12] = new PropertySpace(12, "Electric");
-            Board[13] = new PropertySpace(13, "");
-            Board[14] = new PropertySpace(14, "");
-            Board[15] = new PropertySpace(15, "Railroad");
-            Board[16] = new PropertySpace(16, "");
+            Board[11] = new PropertySpace(11, Properties[6].Name, this);
+            Board[12] = new PropertySpace(12, Properties[7].Name, this);
+            Board[13] = new PropertySpace(13, Properties[8].Name, this);
+            Board[14] = new PropertySpace(14, Properties[9].Name, this);
+            Board[15] = new PropertySpace(15, Properties[10].Name, this);
+            Board[16] = new PropertySpace(16, Properties[11].Name, this);
             Board[17] = new BoardSpace(TileType.COMMUNITY, 17);
-            Board[18] = new PropertySpace(18, "");
-            Board[19] = new PropertySpace(19, "");
+            Board[18] = new PropertySpace(18, Properties[12].Name, this);
+            Board[19] = new PropertySpace(19, Properties[13].Name, this);
             Board[20] = new BoardSpace(TileType.JAIL, 20);
 
             // third side
-            Board[21] = new PropertySpace(21, "");
+            Board[21] = new PropertySpace(21, Properties[14].Name, this);
             Board[22] = new BoardSpace(TileType.COMMUNITY, 22);
-            Board[23] = new PropertySpace(23, "");
-            Board[24] = new PropertySpace(24, "");
-            Board[25] = new PropertySpace(25, "Railroad");
-            Board[26] = new PropertySpace(26, "");
-            Board[27] = new PropertySpace(27, "");
-            Board[28] = new PropertySpace(28, "Water");
-            Board[29] = new PropertySpace(29, "");
+            Board[23] = new PropertySpace(23, Properties[15].Name, this);
+            Board[24] = new PropertySpace(24, Properties[16].Name, this);
+            Board[25] = new PropertySpace(25, Properties[17].Name, this);
+            Board[26] = new PropertySpace(26, Properties[18].Name, this);
+            Board[27] = new PropertySpace(27, Properties[19].Name, this);
+            Board[28] = new PropertySpace(28, Properties[20].Name, this);
+            Board[29] = new PropertySpace(29, Properties[21].Name, this);
             Board[30] = new BoardSpace(TileType.GO_TO_JAIL, 30);
 
             // fourth side
-            Board[31] = new PropertySpace(31, "");
-            Board[32] = new PropertySpace(32, "");
+            Board[31] = new PropertySpace(31, Properties[22].Name, this);
+            Board[32] = new PropertySpace(32, Properties[23].Name, this);
             Board[33] = new BoardSpace(TileType.COMMUNITY, 33);
-            Board[34] = new PropertySpace(34, "");
-            Board[35] = new PropertySpace(35, "Railroad");
+            Board[34] = new PropertySpace(34, Properties[2].Name, this);
+            Board[35] = new PropertySpace(35, Properties[24].Name, this);
             Board[36] = new BoardSpace(TileType.CHANCE, 36);
-            Board[37] = new PropertySpace(37, "");
+            Board[37] = new PropertySpace(37, Properties[25].Name, this);
             Board[38] = new BoardSpace(TileType.TAX, 38);
-            Board[39] = new PropertySpace(39, "");
+            Board[39] = new PropertySpace(39, Properties[26].Name, this);
         }
         void place_players_on_board()
         {
@@ -286,16 +293,19 @@ namespace monopoly2
             {
                 if (player != CurrentPlayer && player != null)
                 {
-                    short i = 0;
-                    foreach (Property property in player.Properties)
+                    if (player.Properties[0] != null)
                     {
-                        if (property != null && (property.Space == CurrentPlayer.Space.Index))
+                        short i = 0;
+                        foreach (Property property in player.Properties)
                         {
-                            property_owner = player;
-                            property_index = i;
-                            return true;
+                            if (property != null && (property.Space == CurrentPlayer.Space.Index))
+                            {
+                                property_owner = player;
+                                property_index = i;
+                                return true;
+                            }
+                            i++;
                         }
-                        i++;
                     }
                 }
             }
@@ -314,7 +324,7 @@ namespace monopoly2
 
         public void NextPlayer ()
         {
-            if (current++ >= Players.Length)
+            if ((current++ >= Players.Length) || (CurrentPlayer == null))
                 current = 0;
         }
     }
@@ -612,7 +622,7 @@ namespace monopoly2
         }
 
         public string Name { get { return name; } }
-        public short Space { get { return space; } }
+        public short Space { get { return space; } set { space = value; } }
         public Colors Color { get { return color; } }
         /// <summary>
         /// The cost of buying the property from the bank
@@ -725,14 +735,20 @@ namespace monopoly2
 
     public class Die
     {
+        System.Random rand = new System.Random();
+
         protected short value;
 
         public short Value { get { return value; } }
 
         public void Roll ()
         {
-            System.Random rand = new System.Random();
+            int seed = 0;
 
+            for (int i = 0; i < 4; i++)
+                seed += rand.Next();
+
+            rand = new Random(seed);
             value = (short)(rand.Next(6) + 1);
         }
     }
@@ -756,6 +772,15 @@ namespace monopoly2
     {
         protected string property_name = "";
 
+        private void set_property_index (Game currentGame)
+        {
+            for (int i = 0; i < currentGame.Properties.Length; i++)
+            {
+                if (currentGame.Properties[i].Name == property_name)
+                    currentGame.Properties[i].Space = index;
+            }
+        }
+
         public Property GetProperty(Game currentGame)
         {
             for(int i = 0; i < currentGame.Properties.Length; i++)
@@ -766,9 +791,10 @@ namespace monopoly2
             return null;
         }
 
-        public PropertySpace(short space_index, string property_name) : base (TileType.PROPERTY, space_index)
+        public PropertySpace(short space_index, string property_name, Game currentGame) : base (TileType.PROPERTY, space_index)
         {
             this.property_name = property_name;
+            set_property_index(currentGame);
         }
     }
 }
