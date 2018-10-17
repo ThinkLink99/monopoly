@@ -60,6 +60,34 @@ namespace monopoly
                 AddNewPlayer(player_names[i], i);
             }
         }
+        void get_properties()
+        {
+            Properties = new Property[]
+            {
+                new Property("prop1", Colors.Brown, 0,0,0,0,0,0,0,0),
+                new Property("prop2", Colors.Brown, 0,0,0,0,0,0,0,0),
+                new Property("prop3", Colors.LightBlue, 0,0,0,0,0,0,0,0),
+                new Property("prop4", Colors.LightBlue, 0,0,0,0,0,0,0,0),
+                new Property("prop5", Colors.LightBlue, 0,0,0,0,0,0,0,0),
+                new Property("prop6", Colors.Magenta, 0,0,0,0,0,0,0,0),
+                new Property("prop7", Colors.Magenta, 0,0,0,0,0,0,0,0),
+                new Property("prop8", Colors.Magenta, 0,0,0,0,0,0,0,0),
+                new Property("prop9", Colors.Orange, 0,0,0,0,0,0,0,0),
+                new Property("prop10", Colors.Orange, 0,0,0,0,0,0,0,0),
+                new Property("prop11", Colors.Orange, 0,0,0,0,0,0,0,0),
+                new Property("prop12", Colors.Red, 0,0,0,0,0,0,0,0),
+                new Property("prop13", Colors.Red, 0,0,0,0,0,0,0,0),
+                new Property("prop14", Colors.Red, 0,0,0,0,0,0,0,0),
+                new Property("prop15", Colors.Yellow, 0,0,0,0,0,0,0,0),
+                new Property("prop16", Colors.Yellow, 0,0,0,0,0,0,0,0),
+                new Property("prop17", Colors.Yellow, 0,0,0,0,0,0,0,0),
+                new Property("prop18", Colors.Green, 0,0,0,0,0,0,0,0),
+                new Property("prop19", Colors.Green, 0,0,0,0,0,0,0,0),
+                new Property("prop20", Colors.Green, 0,0,0,0,0,0,0,0),
+                new Property("prop21", Colors.DarkBlue, 0,0,0,0,0,0,0,0),
+                new Property("prop22", Colors.DarkBlue, 0,0,0,0,0,0,0,0),
+        };
+        }
         void replenish_bank ()
         {
             bank = STARTING_BANK;
@@ -86,9 +114,9 @@ namespace monopoly
             Board[0] = new BoardSpace(TileType.GO, 0);
             Board[1] = new PropertySpace(1, "");
             Board[2] = new BoardSpace(TileType.COMMUNITY, 2);
-            Board[3] = new PropertySpace(2, "");
-            Board[4] = new BoardSpace(TileType.TAX, 3);
-            Board[5] = new PropertySpace(4, "Railroad");
+            Board[3] = new PropertySpace(3, "");
+            Board[4] = new BoardSpace(TileType.TAX, 4);
+            Board[5] = new PropertySpace(5, "Railroad");
             Board[6] = new PropertySpace(6, "");
             Board[7] = new BoardSpace(TileType.CHANCE, 7);
             Board[8] = new PropertySpace(8, "");
@@ -108,27 +136,27 @@ namespace monopoly
             Board[20] = new BoardSpace(TileType.JAIL, 20);
 
             // third side
-            Board[21] = new PropertySpace(11, "");
-            Board[22] = new BoardSpace(TileType.COMMUNITY, 17);
-            Board[23] = new PropertySpace(13, "");
-            Board[24] = new PropertySpace(14, "");
-            Board[25] = new PropertySpace(15, "Railroad");
-            Board[26] = new PropertySpace(16, "");
-            Board[27] = new PropertySpace(18, "");
-            Board[28] = new PropertySpace(12, "Water");
-            Board[29] = new PropertySpace(19, "");
-            Board[30] = new BoardSpace(TileType.GO_TO_JAIL, 20);
+            Board[21] = new PropertySpace(21, "");
+            Board[22] = new BoardSpace(TileType.COMMUNITY, 22);
+            Board[23] = new PropertySpace(23, "");
+            Board[24] = new PropertySpace(24, "");
+            Board[25] = new PropertySpace(25, "Railroad");
+            Board[26] = new PropertySpace(26, "");
+            Board[27] = new PropertySpace(27, "");
+            Board[28] = new PropertySpace(28, "Water");
+            Board[29] = new PropertySpace(29, "");
+            Board[30] = new BoardSpace(TileType.GO_TO_JAIL, 30);
 
             // fourth side
-            Board[31] = new PropertySpace(8, "");
-            Board[32] = new PropertySpace(9, "");
-            Board[33] = new BoardSpace(TileType.COMMUNITY, 7);
-            Board[34] = new PropertySpace(6, "");
-            Board[35] = new PropertySpace(4, "Railroad");
-            Board[36] = new BoardSpace(TileType.CHANCE, 7);
-            Board[37] = new PropertySpace(1, "");
-            Board[38] = new BoardSpace(TileType.TAX, 3);
-            Board[39] = new PropertySpace(2, "");
+            Board[31] = new PropertySpace(31, "");
+            Board[32] = new PropertySpace(32, "");
+            Board[33] = new BoardSpace(TileType.COMMUNITY, 33);
+            Board[34] = new PropertySpace(34, "");
+            Board[35] = new PropertySpace(35, "Railroad");
+            Board[36] = new BoardSpace(TileType.CHANCE, 36);
+            Board[37] = new PropertySpace(37, "");
+            Board[38] = new BoardSpace(TileType.TAX, 38);
+            Board[39] = new PropertySpace(39, "");
         }
         void place_players_on_board()
         {
@@ -149,9 +177,13 @@ namespace monopoly
         public void NewGame(string[] player_names)
         {
             get_players(player_names);
+            get_properties();
+
             replenish_bank();
             pay_starting_cash();
+
             build_board();
+
             place_players_on_board();
         }
 
@@ -252,12 +284,12 @@ namespace monopoly
         {
             foreach (Player player in Players)
             {
-                if (player != CurrentPlayer)
+                if (player != CurrentPlayer && player != null)
                 {
                     short i = 0;
                     foreach (Property property in player.Properties)
                     {
-                        if (property.Space == CurrentPlayer.Space.Index)
+                        if (property != null && (property.Space == CurrentPlayer.Space.Index))
                         {
                             property_owner = player;
                             property_index = i;
