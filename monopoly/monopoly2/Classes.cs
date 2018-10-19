@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Threading;
 
 namespace monopoly2
 {
@@ -16,6 +15,9 @@ namespace monopoly2
     /// </summary>
     public enum CardType { CHANCE, COMMUNITY }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public enum TileType { PROPERTY, CHANCE, COMMUNITY, FREE_PARKING, GO_TO_JAIL, JAIL, TAX, GO}
 
     /// <summary>
@@ -23,11 +25,10 @@ namespace monopoly2
     /// </summary>
     public class Game
     {
-        const short MAX_PLAYERS = 8;
         const int STARTING_BANK = 20000; // Bank only has 20,000 in it
 
         protected int current = 0;
-        protected int bank = 20000;
+        protected int bank = 0;
 
         /// <summary>
         /// The current amount of money in the game Bank. Bank starts with 20,000 dollars in it.
@@ -55,10 +56,10 @@ namespace monopoly2
 
         void get_players (string[] player_names)
         {
-            Players = new Player[MAX_PLAYERS];
+            Players = new Player[player_names.Length];
             for(int i = 0; i < player_names.Length; i++)
             {
-                if (player_names[i] != "")
+                if (!(player_names[i] == "" || player_names[i] == null))
                     AddNewPlayer(player_names[i], i);
             }
         }
@@ -737,6 +738,9 @@ namespace monopoly2
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class Card
     {
         protected CardType type;
@@ -746,6 +750,9 @@ namespace monopoly2
         public string Description { get { return description; } }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class Die
     {
         System.Random rand = new System.Random();
@@ -766,6 +773,9 @@ namespace monopoly2
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class BoardSpace
     {
         protected short index = 0;
@@ -781,6 +791,9 @@ namespace monopoly2
         }
     }
 
+    /// <summary>
+    /// 
+    /// </summary>
     public class  PropertySpace : BoardSpace
     {
         protected string property_name = "";

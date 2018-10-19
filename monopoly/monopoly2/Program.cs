@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace monopoly2
 {
@@ -29,11 +25,20 @@ namespace monopoly2
                 " [1]: Play Game!",
                 " [Q]: Quit"
             }, new string[] { "1", "Q" }, ref choice);
+            int num_players = 0;
 
             if (choice == "1")
             {
-                players = new string[8];
-                for (int i = 0; i < players.Length; i++)
+                do
+                {
+                    print_to_console("How many players? [Minimum: 2]");
+                    read_from_console(ref choice);
+
+                    int.TryParse(choice, out num_players);
+                    players = new string[num_players];
+                } while (num_players <= 1);
+
+                for (int i = 0; i < num_players; i++)
                 {
                     print_to_console("Enter Player " + (i + 1).ToString() + "'s name.");
                     read_from_console(ref players[i]);
@@ -42,7 +47,6 @@ namespace monopoly2
 
                 print_to_console("Starting game with these players...");
                 Thread.Sleep(3000);
-
                 play_game(players);
             }
             else if (choice == "Q")
@@ -52,6 +56,7 @@ namespace monopoly2
             }
         }
 
+        // --- Gameplay --- \\
         static void play_game(string[] players)
         {
             string play_again = "Y";
@@ -69,7 +74,7 @@ namespace monopoly2
                         take_turn();
                         end_turn();
 
-                        print_to_console("Press any key to continue...");
+                        print_to_console("Player 2, press any key to begin your turn...");
                         Console.ReadKey();
 
                         players_remaining = get_number_of_players_left();
@@ -247,6 +252,7 @@ namespace monopoly2
             return count;
         }
 
+        // --- Console Commands --- \\
         static void print_to_console(string message)
         {
             Console.WriteLine(message);
