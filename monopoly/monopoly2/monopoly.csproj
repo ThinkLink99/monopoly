@@ -6,8 +6,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{CE37F072-FC5B-4256-94D6-78E91985A10D}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>monopoly2</RootNamespace>
-    <AssemblyName>monopoly2</AssemblyName>
+    <RootNamespace>monopoly</RootNamespace>
+    <AssemblyName>monopoly</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

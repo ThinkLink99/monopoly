@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace monopoly2
+namespace monopoly
 {
     class Program
     {
@@ -10,6 +10,9 @@ namespace monopoly2
             main_menu();
         }
         static Game game;
+
+        static Die die_1 = new Die();
+        static Die die_2 = new Die();
 
         static void main_menu()
         {
@@ -99,33 +102,11 @@ namespace monopoly2
         static void take_turn()
         {
             string choice = "";
-            short roll;
-            Die die_1 = new Die();
-            Die die_2 = new Die();
 
             // see if the user would like to roll or trade
             if (game.CurrentPlayer.IsInJail)
             {
-                input_is_valid(new string[] { "Would you like to attempt a roll or stay in Jail? [Roll/Stay]: " }, new string[] { "roll", "stay" }, ref choice);
-
-                if (choice.ToUpper() == "ROLL")
-                {
-                    roll = game.Roll(ref die_1, ref die_2);
-
-                    if (die_1.Value == die_2.Value)
-                    {
-                        game.CurrentPlayer.GetOutOfJail();
-                    }
-                }
-                else if (choice.ToUpper() == "STAY")
-                {
-
-                }
-
-                if (game.CurrentPlayer.IsInJail)
-                {
-
-                }
+                jail_check();
             }
             else
             {
@@ -133,108 +114,162 @@ namespace monopoly2
 
                 if (choice.ToUpper() == "ROLL")
                 {
-                    // roll dice to determine spaces moved
-                    roll = game.Roll(ref die_1, ref die_2);
-                    print_to_console("You rolled a " + roll.ToString() + "!");
+                    roll_dice();
+                }
 
-                    // move spaces
-                    game.CurrentPlayer.Move(roll, game);
-
-                    // check what the current tile is
-
-                    //is the tile an owned property?
-                    Player property_owner = null;
-                    short index = 0;
-                    if (game.CurrentPlayer.Space.Type == TileType.PROPERTY)
-                    {
-                        print_to_console("You landed on " + ((PropertySpace)game.CurrentPlayer.Space).GetProperty(game).Name + "!");
-                        if (game.IsOwnedProperty(ref property_owner, ref index))
-                        {
-                            if (!property_owner.Properties[index].Monopolied)
-                                if (!game.CurrentPlayer.PayRent(property_owner.Properties[index], property_owner, roll))
-                                    go_bankrupt(property_owner);
-                        }
-                        if (game.IsBankProperty())
-                        {
-                            input_is_valid(new string[] { "Would you like to purchase this Property? [Y/N]: " }, new string[] { "y", "n" }, ref choice);
-
-                            // if yes
-                            if (choice.ToUpper() == "Y")
-                            {
-                                Property property = ((PropertySpace)game.CurrentPlayer.Space).GetProperty(game);
-                                game.CurrentPlayer.BuyProperty(property);
-                                game.GiveProperty(property, game.CurrentPlayer);
-                                print_to_console("You bought " + property.Name + " for $" + property.Cost + "!");
-                            }
-                            else if (choice.ToUpper() == "N")
-                            {
-                                // property goes to auction
-                            }
-                        }
-                        else if (game.CurrentPlayer.Space.Type == TileType.CHANCE)
-                        {
-                            // draw a chance card
-                            print_to_console("You landed on Chance!");
-                        }
-                        else if (game.CurrentPlayer.Space.Type == TileType.COMMUNITY)
-                        {
-                            // draw a community chest card
-                            print_to_console("You landed on Community Chest!");
-                        }
-                        else if (game.CurrentPlayer.Space.Type == TileType.GO_TO_JAIL)
-                        {
-                            print_to_console("You landed on Go to Jail!");
-                            game.CurrentPlayer.GoToJail();
-
-                            print_to_console("--- Jail Rights ---");
-                            print_to_console("1) You can attempt to roll doubles once per turn for three turns to get out.");
-                            print_to_console("   If you do not roll doubles on the third attempt, you must pay $50 or use a Get Out Of Jail Free card.");
-                            print_to_console("   (Paying or playing a GOOJF card can be done instead of rolling)");
-                            print_to_console("2) You are allowed to collect rent and make trade deals with other players while in jail.");
-
-                        }
-                        else if (game.CurrentPlayer.Space.Type == TileType.JAIL)
-                        {
-                            print_to_console("You landed on Jail!");
-
-                        }
-                        else if (game.CurrentPlayer.Space.Type == TileType.GO)
-                        {
-                            print_to_console("You landed on Go!");
-
-                        }
-                        else if (game.CurrentPlayer.Space.Type == TileType.TAX)
-                        {
-                            print_to_console("You landed on Tax!");
-
-                        }
-                        else if (game.CurrentPlayer.Space.Type == TileType.FREE_PARKING)
-                        {
-                            print_to_console("You landed on Free Parking!");
-
-                        }
-                        else
-                        {
-                            print_to_console("You landed on...");
-                            print_to_console("wait... how did this happen?");
-                            print_to_console("we're smarter than this.");
-                            print_to_console("");
-                            print_to_console("Congratulations. You broke my game. Your parents must be very proud of you.");
-                            Environment.Exit(0);
-                        }
-                    }
-
-                    if (choice.ToUpper() == "TRADE")
-                    {
-
-                    }
-
-                    // chack if the roll was doubles
-                    if (die_1.Value == die_2.Value) { }
-                    //take_turn();
+                if (choice.ToUpper() == "TRADE")
+                {
+                    trade();
                 }
             }
         }
+
+        static void roll_dice()
+        {
+            short roll = 0;
+
+            // roll dice to determine spaces moved
+            roll = game.RollDice(ref die_1, ref die_2);
+            print_to_console("You rolled a " + roll.ToString() + "!");
+
+            // move spaces
+            game.CurrentPlayer.Move(roll, game);
+
+            // check what the current tile is
+
+            //is the tile an owned property?
+
+            if (game.CurrentPlayer.Space.Type == TileType.PROPERTY)
+            {
+                property_check(ref roll);
+            }
+            else if (game.CurrentPlayer.Space.Type == TileType.CHANCE)
+            {
+                // draw a chance card
+                print_to_console("You landed on Chance!");
+            }
+            else if (game.CurrentPlayer.Space.Type == TileType.COMMUNITY)
+            {
+                // draw a community chest card
+                print_to_console("You landed on Community Chest!");
+            }
+            else if (game.CurrentPlayer.Space.Type == TileType.GO_TO_JAIL)
+            {
+                print_to_console("You landed on Go to Jail!");
+                game.CurrentPlayer.GoToJail();
+
+                print_to_console("--- Jail Rights ---");
+                print_to_console("1) You can attempt to roll doubles once per turn for three turns to get out.");
+                print_to_console("   If you do not roll doubles on the third attempt, you must pay $50 or use a Get Out Of Jail Free card.");
+                print_to_console("   (Paying or playing a GOOJF card can be done instead of rolling)");
+                print_to_console("2) You are allowed to collect rent and make trade deals with other players while in jail.");
+
+            }
+            else if (game.CurrentPlayer.Space.Type == TileType.JAIL)
+            {
+                print_to_console("You landed on Jail! Don't worry, you're just visiting.");
+
+            }
+            else if (game.CurrentPlayer.Space.Type == TileType.GO)
+            {
+                print_to_console("You landed on Go!");
+
+            }
+            else if (game.CurrentPlayer.Space.Type == TileType.TAX)
+            {
+                print_to_console("You landed on Tax!");
+
+            }
+            else if (game.CurrentPlayer.Space.Type == TileType.FREE_PARKING)
+            {
+                print_to_console("You landed on Free Parking!");
+
+            }
+            else
+            {
+                print_to_console("You landed on...");
+                print_to_console("wait... how did this happen?");
+                print_to_console("we're smarter than this.");
+                print_to_console("");
+                print_to_console("Congratulations. You broke my game. Your parents must be very proud of you.");
+                Environment.Exit(0);
+            }
+
+            if (roll_is_doubles())
+                take_turn ();
+        }
+        static void trade ()
+        {
+            // when done trading, roll dice
+            roll_dice();
+        }
+
+        static void jail_check()
+        {
+            string choice = "";
+            short roll = 0;
+
+            input_is_valid(new string[] { "Would you like to leave jail or stay in Jail? [Leave/Stay]: " }, new string[] { "leave", "stay" }, ref choice);
+
+            if (choice.ToUpper() == "LEAVE")
+            {
+                input_is_valid(new string[] { "Would you like to roll, pay, or use a get out of jail free card. [Roll/Pay/Card]: " }, new string[] { "roll", "pay", "card" }, ref choice);
+                if (choice == "ROLL")
+                {
+                    roll = game.RollDice(ref die_1, ref die_2);
+
+                    if (die_1.Value == die_2.Value)
+                    {
+                        game.CurrentPlayer.GetOutOfJail();
+                    }
+                }
+            }
+            else if (choice.ToUpper() == "STAY")
+            {
+
+            }
+            if (game.CurrentPlayer.IsInJail)
+            {
+
+            }
+        }
+        static void property_check(ref short roll)
+        {
+            string choice = "";
+            Player property_owner = null;
+            short index = 0;
+
+            print_to_console("You landed on " + ((PropertySpace)game.CurrentPlayer.Space).GetProperty(game).Name + "!");
+            if (game.IsOwnedProperty(ref property_owner, ref index))
+            {
+                if (!property_owner.Properties[index].Monopolied)
+                    if (!game.CurrentPlayer.PayRent(property_owner.Properties[index], property_owner, roll))
+                        go_bankrupt(property_owner);
+            }
+            if (game.IsBankProperty())
+            {
+                input_is_valid(new string[] { "Would you like to purchase this Property? [Y/N]: " }, new string[] { "y", "n" }, ref choice);
+
+                // if yes
+                if (choice.ToUpper() == "Y")
+                {
+                    Property property = ((PropertySpace)game.CurrentPlayer.Space).GetProperty(game);
+                    game.CurrentPlayer.BuyProperty(property);
+                    game.GiveProperty(property, game.CurrentPlayer);
+                    print_to_console("You bought " + property.Name + " for $" + property.Cost + "!");
+                }
+                else if (choice.ToUpper() == "N")
+                {
+                    // property goes to auction
+                }
+            }
+        }
+
+        static bool roll_is_doubles()
+        {
+            return die_1.Value == die_2.Value;
+        }
+
         static void go_bankrupt(Player bankrupter)
         {
             game.CurrentPlayer = game.CurrentPlayer.FileBankruptcy(bankrupter);

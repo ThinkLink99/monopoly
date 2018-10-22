@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace monopoly2
+namespace monopoly
 {
     /// <summary>
     /// Colors is the property colors in game, including railroads and utilities
@@ -25,6 +25,7 @@ namespace monopoly2
     /// </summary>
     public class Game
     {
+        Random rand = new Random();
         const int STARTING_BANK = 20000; // Bank only has 20,000 in it
 
         protected int current = 0;
@@ -52,7 +53,7 @@ namespace monopoly2
         /// </summary>
         public Card[] CommunityChestPile { get; set; }
 
-        public Player CurrentPlayer { get { return Players[current]; } set { Players[current] = value; } }
+        public Player CurrentPlayer { get { if (current < Players.Length) return Players[current]; else return null; } set { Players[current] = value; } }
 
         void get_players (string[] player_names)
         {
@@ -281,10 +282,10 @@ namespace monopoly2
         /// <param name="die_1"></param>
         /// <param name="die_2"></param>
         /// <returns></returns>
-        public short Roll (ref Die die_1, ref Die die_2)
+        public short RollDice (ref Die die_1, ref Die die_2)
         {
-            die_1.Roll();
-            die_2.Roll();
+            die_1.Roll(rand);
+            die_2.Roll(rand);
 
             return (short)(die_1.Value + die_2.Value);
         }
@@ -318,7 +319,7 @@ namespace monopoly2
         {
             for(int i = 0; i < Properties.Length; i++)
             {
-                if (Properties[i].Space == CurrentPlayer.Space.Index)
+                if (Properties[i] != null && Properties[i].Space == CurrentPlayer.Space.Index)
                     return true;
             }
             return false;
@@ -326,7 +327,7 @@ namespace monopoly2
 
         public void NextPlayer ()
         {
-            if ((current++ >= Players.Length) || (CurrentPlayer == null))
+            if (((current++ >= Players.Length) || CurrentPlayer == null))
                 current = 0;
         }
     }
@@ -755,13 +756,11 @@ namespace monopoly2
     /// </summary>
     public class Die
     {
-        System.Random rand = new System.Random();
-
         protected short value;
 
         public short Value { get { return value; } }
 
-        public void Roll ()
+        public void Roll (Random rand)
         {
             int seed = 0;
 
