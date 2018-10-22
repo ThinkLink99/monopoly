@@ -200,6 +200,20 @@ namespace monopoly
         }
         static void trade ()
         {
+            string choice = "";
+
+            // ask the player to select a player to trade with
+            int i = 0;
+            foreach (Player player in game.Players)
+            {
+                print_to_console(string.Concat("[", i+1, "]: ", player.Name));
+                i++;
+            }
+
+            read_from_console(ref choice);
+
+            //game.Players[int.Parse(choice) - 1]
+
             // when done trading, roll dice
             roll_dice();
         }

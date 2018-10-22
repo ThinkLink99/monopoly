@@ -21,11 +21,11 @@ namespace monopoly
     public enum TileType { PROPERTY, CHANCE, COMMUNITY, FREE_PARKING, GO_TO_JAIL, JAIL, TAX, GO}
 
     /// <summary>
-    /// Game controls all functions the game handle, such as keeping track of players and properties
+    /// Game controls all functions the game handles, such as keeping track of players and properties
     /// </summary>
     public class Game
     {
-        Random rand = new Random();
+        readonly Random rand = new Random();
         const int STARTING_BANK = 20000; // Bank only has 20,000 in it
 
         protected int current = 0;
