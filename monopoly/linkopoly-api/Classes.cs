@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace monopoly
+namespace linkopoly_api
 {
     /// <summary>
     /// Colors is the property colors in game, including railroads and utilities

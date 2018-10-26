@@ -1,7 +1,8 @@
 ﻿using System;
 using System.Threading;
+using linkopoly_api;
 
-namespace monopoly
+namespace Consopoly
 {
     class Program
     {
@@ -126,6 +127,8 @@ namespace monopoly
 
         static void roll_dice()
         {
+            print_to_console("");
+            print_to_console("--- Rolling ---");
             short roll = 0;
 
             // roll dice to determine spaces moved
@@ -141,6 +144,8 @@ namespace monopoly
 
             if (game.CurrentPlayer.Space.Type == TileType.PROPERTY)
             {
+                print_to_console("");
+                print_to_console("--- Property ---");
                 property_check(ref roll);
             }
             else if (game.CurrentPlayer.Space.Type == TileType.CHANCE)
@@ -198,24 +203,158 @@ namespace monopoly
             if (roll_is_doubles())
                 take_turn ();
         }
-        static void trade ()
+        static void trade()
         {
+            print_to_console("");
+            print_to_console("--- Trading ---");
             string choice = "";
 
+            print_to_console("Select a player to trade with: ");
+            Player trader = select_trader();
+
+            print_to_console(string.Concat("Now trading with ", trader.Name));
+
+            print_to_console("");
+            print_to_console("--- This player will give you ---");
+            int[] trader_gives = select_trades(trader);
+
+            print_to_console("");
+            print_to_console("--- You will give this player ---");
+            int[] trader_gets = select_trades(game.CurrentPlayer);
+
+            if (trader_gives.Length > 0 && trader_gets.Length > 0)
+            {
+                input_is_valid(new string[] { trader.Name + ", do you wish to accept this trade, reject his trade or change this trade( [Accept/Reject/Change]: " }, new string[] { "accept", "reject", "change" }, ref choice);
+
+                if (choice.ToUpper() == "ACCEPT")
+                {
+                    trader_accepts(trader, trader_gives, trader_gets);
+                }
+                else if (choice.ToUpper() == "REJECT")
+                {
+                    print_to_console(trader.Name + " rejected the trade");
+                }
+                else if (choice.ToUpper() == "CHANGE")
+                {
+
+                }
+                else
+                {
+
+                }
+            }
+            else
+            {
+                if (trader_gets.Length == 0)
+                {
+                    print_to_console("You have nothing to trade.");
+                }
+                if(trader_gives.Length == 0)
+                {
+                    print_to_console("This player has nothing to trade");
+                }
+            }
+
+            print_to_console("Now taking turn...");
+            // when done trading, roll dice
+            roll_dice();
+        }
+        static Player select_trader()
+        {
+            string choice = "";
             // ask the player to select a player to trade with
             int i = 0;
             foreach (Player player in game.Players)
             {
-                print_to_console(string.Concat("[", i+1, "]: ", player.Name));
+                if (player != game.CurrentPlayer)
+                    print_to_console(string.Concat("[", i + 1, "]: ", player.Name));
                 i++;
             }
 
             read_from_console(ref choice);
+            return game.Players[int.Parse(choice) - 1];
+        }
+        static int[] select_trades(Player trader)
+        {
+            int i = 0;
+            string choice = "";
+            int[] trades = new int[0];
+            if (trader.Properties[0] != null)
+            {
+                print_to_console("Here is a list of all the items currently owned by " + trader.Name + ": ");
 
-            //game.Players[int.Parse(choice) - 1]
+                print_to_console("Enter the number of each item you wish to trade. enter done when finished.");
 
-            // when done trading, roll dice
-            roll_dice();
+                i = 0;
+                foreach (Property property in trader.Properties)
+                {
+                    if (property != null)
+                        print_to_console(string.Concat("[", i, "]: ", property.Name));
+                    i++;
+                }
+
+                trades = new int[28];
+                i = 0;
+                do
+                {
+                    read_from_console(ref choice);
+                    try
+                    {
+                        trades[i] = int.Parse(choice);
+                    }
+                    catch { }
+                    i++;
+                }
+                while (choice.ToUpper() != "DONE");
+            }
+            return trades;
+        }
+        static void trader_accepts(Player trader, int[] trader_gives, int[] trader_gets)
+        {
+            int i = 0;
+            Property[] temp = new Property[trader_gets.Length];
+
+            foreach (int trade in trader_gives)
+            {
+                if (trade != 0)
+                {
+                    temp[i] = trader.Properties[trade];
+                    trader.Properties[trade] = null;
+                }
+                i++;
+            }
+            foreach (int trade in trader_gets)
+            {
+                int j = 0;
+                if (trade != 0)
+                {
+                    foreach (Property property in trader.Properties)
+                    {
+                        if (property == null)
+                        {
+                            trader.Properties[j] = game.CurrentPlayer.Properties[trade];
+                            break;
+                        }
+                        j++;
+                    }
+                }
+            }
+            foreach (int trade in trader_gives)
+            {
+                int j = 0;
+                if (trade != 0)
+                {
+                    foreach (Property property in game.CurrentPlayer.Properties)
+                    {
+                        if (property == null)
+                        {
+                            game.CurrentPlayer.Properties[j] = temp[trade];
+                            break;
+                        }
+                        j++;
+                    }
+                }
+            }
         }
 
         static void jail_check()
