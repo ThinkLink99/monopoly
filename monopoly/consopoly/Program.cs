@@ -396,8 +396,12 @@ namespace Consopoly
             if (game.IsOwnedProperty(ref property_owner, ref index))
             {
                 if (!property_owner.Properties[index].Monopolied)
-                    if (!game.CurrentPlayer.PayRent(property_owner.Properties[index], property_owner, roll))
-                        go_bankrupt(property_owner);
+                    game.CurrentPlayer.PayRent(property_owner.Properties[index], property_owner, roll);
+                print_to_console("");
+                if (game.CurrentPlayer.Cash <= 0)
+                {
+                    go_bankrupt(property_owner);
+                }
             }
             if (game.IsBankProperty())
             {

@@ -448,26 +448,24 @@ namespace linkopoly_api
         /// <param name="property_owner"></param>
         /// <param name="roll"></param>
         /// <returns>Returns false if the player is out of money</returns>
-        public bool PayRent(Property property, Player property_owner, short roll)
+        public int PayRent(Property property, Player property_owner, short roll)
         {
             switch (property.Color)
             {
                 case Colors.Railroad:
                     PayCash(property.Rent(property_owner.Railroads));
                     property_owner.RecieveCash(property.Rent(property_owner.Railroads));
-                    break;
+                    return property.Rent(property_owner.Railroads);
                 case Colors.Utility:
                     PayCash(property.Rent(roll, property_owner.Utilities));
                     property_owner.RecieveCash(property.Rent(roll, property_owner.Utilities));
-                    break;
+                    return property.Rent(roll, property_owner.Utilities);
                 default:
                     PayCash(property.Rent());
                     property_owner.RecieveCash(property.Rent());
-                    break;
+                    return property.Rent();
             }
-            if (Cash < 0)
-                return false;
-            else return true;
+            
         }
 
         public void MonopolyCheck(Colors color)
