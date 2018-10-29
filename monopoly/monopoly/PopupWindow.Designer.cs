@@ -37,9 +37,9 @@
             // 
             this.txtInput.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtInput.Location = new System.Drawing.Point(13, 51);
+            this.txtInput.Location = new System.Drawing.Point(13, 116);
             this.txtInput.Name = "txtInput";
-            this.txtInput.Size = new System.Drawing.Size(595, 22);
+            this.txtInput.Size = new System.Drawing.Size(283, 22);
             this.txtInput.TabIndex = 0;
             // 
             // lblPrompt
@@ -50,14 +50,14 @@
             this.lblPrompt.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblPrompt.Location = new System.Drawing.Point(10, 9);
             this.lblPrompt.Name = "lblPrompt";
-            this.lblPrompt.Size = new System.Drawing.Size(672, 39);
+            this.lblPrompt.Size = new System.Drawing.Size(360, 104);
             this.lblPrompt.TabIndex = 1;
             this.lblPrompt.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // btnSubmit
             // 
             this.btnSubmit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSubmit.Location = new System.Drawing.Point(614, 51);
+            this.btnSubmit.Location = new System.Drawing.Point(302, 116);
             this.btnSubmit.Name = "btnSubmit";
             this.btnSubmit.Size = new System.Drawing.Size(68, 23);
             this.btnSubmit.TabIndex = 2;
@@ -69,13 +69,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(694, 85);
+            this.ClientSize = new System.Drawing.Size(382, 150);
             this.ControlBox = false;
             this.Controls.Add(this.btnSubmit);
             this.Controls.Add(this.lblPrompt);
             this.Controls.Add(this.txtInput);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
             this.Name = "PopupWindow";
+            this.ShowInTaskbar = false;
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "PopupWindow";

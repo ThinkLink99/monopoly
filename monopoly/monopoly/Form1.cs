@@ -234,12 +234,14 @@ namespace monopoly
             int i = 0;
             foreach (Player player in game.Players)
             {
-                if (player != game.CurrentPlayer)
+                if (player != game.CurrentPlayer && player != null )
                     print_to_console(string.Concat("[", i + 1, "]: ", player.Name));
                 i++;
             }
 
-            //read_from_console(ref choice);
+            PopupWindow pw = new PopupWindow();
+            read_from_console(ref choice, pw);
+
             return (short)(int.Parse(choice) - 1);
         }
         /// <summary>
@@ -271,7 +273,8 @@ namespace monopoly
                 i = 0;
                 do
                 {
-                    //read_from_console(ref choice);
+                    PopupWindow pw = new PopupWindow();
+                    read_from_console(ref choice, pw);
                     try
                     {
                         trades[i] = int.Parse(choice);
@@ -471,7 +474,7 @@ namespace monopoly
         /// <param name="message">the message to print to the console window</param>
         void print_to_console(string message)
         {
-            rtbOutput.Text += message;
+            rtbOutput.Text += message + "\n";
         }
         /// <summary>
         /// clears all text from the console window
@@ -523,6 +526,30 @@ namespace monopoly
             ngf.ShowDialog();
 
             play_game(ngf.names);
+        }
+
+        private void quitToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            Application.Exit();
+        }
+
+        private void fullscreenToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            if (goWIndowedToolStripMenuItem.Checked)
+            {
+                goWIndowedToolStripMenuItem.Checked = false;
+            }
+            FormBorderStyle = FormBorderStyle.None;
+            Size = Screen.PrimaryScreen.Bounds.Size;
+        }
+
+        private void goWIndowedToolStripMenuItem_Click(object sender, System.EventArgs e)
+        {
+            if (fullscreenToolStripMenuItem.Checked)
+                fullscreenToolStripMenuItem.Checked = false;
+            FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            Size = Screen.PrimaryScreen.WorkingArea.Size;
+            Location = Screen.PrimaryScreen.Bounds.Location;
         }
     }
 }
