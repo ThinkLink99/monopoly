@@ -220,7 +220,7 @@ namespace linkopoly_api
         }
 
         /// <summary>
-        /// GiveProperty will call the PLayer.BuyProperty function and set the index of the bank owned properties to null
+        /// GiveProperty will call the Player.BuyProperty function and set the index of the bank owned properties to null
         /// </summary>
         /// <param name="property"></param>
         /// <param name="player"></param>
@@ -290,6 +290,12 @@ namespace linkopoly_api
             return (short)(die_1.Value + die_2.Value);
         }
 
+        /// <summary>
+        /// Checks to see if this property is currently owned by another player
+        /// </summary>
+        /// <param name="property_owner"></param>
+        /// <param name="property_index"></param>
+        /// <returns></returns>
         public bool IsOwnedProperty (ref Player property_owner, ref short property_index)
         {
             foreach (Player player in Players)
@@ -315,6 +321,10 @@ namespace linkopoly_api
             return false;
         }
 
+        /// <summary>
+        /// Checks to see if this property is still owned by the bank
+        /// </summary>
+        /// <returns>Returns true if the property is owned by the bank</returns>
         public bool IsBankProperty()
         {
             for(int i = 0; i < Properties.Length; i++)
@@ -325,6 +335,10 @@ namespace linkopoly_api
             return false;
         }
 
+        /// <summary>
+        /// Advances current player index to next index.
+        /// Checks if the new index is greater than the length or the player at that index is null
+        /// </summary>
         public void NextPlayer ()
         {
             if (((current++ >= Players.Length) || CurrentPlayer == null))

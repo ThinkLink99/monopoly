@@ -206,6 +206,7 @@ namespace Consopoly
             if (roll_is_doubles())
                 take_turn ();
         }
+
         /// <summary>
         /// this functions handles getting a list of players that can be traded with and 
         /// then allowing the current player to choose which properties he wants to give, and which properties he wants to get.
@@ -266,6 +267,10 @@ namespace Consopoly
             // when done trading, roll dice
             roll_dice();
         }
+        /// <summary>
+        /// asks the user to input the number of the desired trade partner. 
+        /// </summary>
+        /// <returns>returns the parsed input text - 1 to use as the index of the player in game.Players</returns>
         static short select_trader()
         {
             string choice = "";
@@ -281,6 +286,12 @@ namespace Consopoly
             read_from_console(ref choice);
             return (short)(int.Parse(choice) - 1);
         }
+        /// <summary>
+        /// gets all properties available to trade from the current trader
+        /// and asks the current user to input all properties he wants to trade
+        /// </summary>
+        /// <param name="trader">the player whose properties currently need to be accessed</param>
+        /// <returns>returns an array of choices as indicies</returns>
         static int[] select_trades(Player trader)
         {
             int i = 0;
@@ -316,6 +327,12 @@ namespace Consopoly
             }
             return trades;
         }
+        /// <summary>
+        /// this function handles moving properties from one player's property list to the other.
+        /// </summary>
+        /// <param name="trader">the person the current player is trading with. best if calling from the array of players by reference</param>
+        /// <param name="trader_gives">the array of choices that the current player will recieve from the trader</param>
+        /// <param name="trader_gets">the array of choices that the current player will  give to the trader</param>
         static void trader_accepts(ref Player trader, int[] trader_gives, int[] trader_gets)
         {
             int i = 0;
@@ -364,6 +381,9 @@ namespace Consopoly
             }
         }
 
+        /// <summary>
+        /// this function will handle checking which actions the current player would like to take while still in jail
+        /// </summary>
         static void jail_check()
         {
             string choice = "";
@@ -412,6 +432,10 @@ namespace Consopoly
 
             }
         }
+        /// <summary>
+        /// this function will handle the buying or passing of a property the current player is currently on.
+        /// </summary>
+        /// <param name="roll">the value of the dice currently rolled. used to calculate utility rent if necessary</param>
         static void property_check(ref short roll)
         {
             string choice = "";
