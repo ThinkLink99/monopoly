@@ -20,7 +20,7 @@ namespace Consopoly
             string[] players = new string[8];
             string choice = "";
 
-            input_is_valid(new string[]
+            get_input(new string[]
             {
                 " ------------------ ",
                 " -    Monopoly    - " ,
@@ -86,8 +86,7 @@ namespace Consopoly
                     }
 
                 } while (players_remaining > 1);
-                print_to_console("Play Again? [Y/N]: ");
-                play_again = Console.ReadLine();
+                get_input(new string[] { "Would you like to play again? [Y/N]: " }, new string[] { "y", "n" }, ref play_again);
 
             } while (play_again.ToString().ToUpper() == "Y");
         }
@@ -111,7 +110,7 @@ namespace Consopoly
             }
             else
             {
-                input_is_valid(new string[] { "Would you like to roll the dice or make a trade with a player?[Roll / Trade]: " }, new string[] { "roll", "trade" }, ref choice);
+                get_input(new string[] { "Would you like to roll the dice or make a trade with a player?[Roll / Trade]: " }, new string[] { "roll", "trade" }, ref choice);
 
                 if (choice.ToUpper() == "ROLL")
                 {
@@ -125,6 +124,10 @@ namespace Consopoly
             }
         }
 
+        /// <summary>
+        /// this function calls the game.RollDice function and moves the player to that BoardSpace. 
+        /// This function then checks which type of of space the player is currently on.
+        /// </summary>
         static void roll_dice()
         {
             print_to_console("");
@@ -203,6 +206,10 @@ namespace Consopoly
             if (roll_is_doubles())
                 take_turn ();
         }
+        /// <summary>
+        /// this functions handles getting a list of players that can be traded with and 
+        /// then allowing the current player to choose which properties he wants to give, and which properties he wants to get.
+        /// </summary>
         static void trade()
         {
             print_to_console("");
@@ -210,13 +217,13 @@ namespace Consopoly
             string choice = "";
 
             print_to_console("Select a player to trade with: ");
-            Player trader = select_trader();
+            short i = select_trader();
 
-            print_to_console(string.Concat("Now trading with ", trader.Name));
+            print_to_console(string.Concat("Now trading with ", game.Players[i].Name));
 
             print_to_console("");
             print_to_console("--- This player will give you ---");
-            int[] trader_gives = select_trades(trader);
+            int[] trader_gives = select_trades(game.Players[i]);
 
             print_to_console("");
             print_to_console("--- You will give this player ---");
@@ -224,15 +231,15 @@ namespace Consopoly
 
             if (trader_gives.Length > 0 && trader_gets.Length > 0)
             {
-                input_is_valid(new string[] { trader.Name + ", do you wish to accept this trade, reject his trade or change this trade( [Accept/Reject/Change]: " }, new string[] { "accept", "reject", "change" }, ref choice);
+                get_input(new string[] { game.Players[i].Name + ", do you wish to accept this trade, reject his trade or change this trade( [Accept/Reject/Change]: " }, new string[] { "accept", "reject", "change" }, ref choice);
 
                 if (choice.ToUpper() == "ACCEPT")
                 {
-                    trader_accepts(trader, trader_gives, trader_gets);
+                    trader_accepts(ref game.Players[i], trader_gives, trader_gets);
                 }
                 else if (choice.ToUpper() == "REJECT")
                 {
-                    print_to_console(trader.Name + " rejected the trade");
+                    print_to_console(game.Players[i].Name + " rejected the trade");
                 }
                 else if (choice.ToUpper() == "CHANGE")
                 {
@@ -259,7 +266,7 @@ namespace Consopoly
             // when done trading, roll dice
             roll_dice();
         }
-        static Player select_trader()
+        static short select_trader()
         {
             string choice = "";
             // ask the player to select a player to trade with
@@ -272,21 +279,21 @@ namespace Consopoly
             }
 
             read_from_console(ref choice);
-            return game.Players[int.Parse(choice) - 1];
+            return (short)(int.Parse(choice) - 1);
         }
         static int[] select_trades(Player trader)
         {
             int i = 0;
             string choice = "";
             int[] trades = new int[0];
-            if (trader.Properties[0] != null)
+            if (game.Players[i].Properties[0] != null)
             {
-                print_to_console("Here is a list of all the items currently owned by " + trader.Name + ": ");
+                print_to_console("Here is a list of all the items currently owned by " + game.Players[i].Name + ": ");
 
                 print_to_console("Enter the number of each item you wish to trade. enter done when finished.");
 
                 i = 0;
-                foreach (Property property in trader.Properties)
+                foreach (Property property in game.Players[i].Properties)
                 {
                     if (property != null)
                         print_to_console(string.Concat("[", i, "]: ", property.Name));
@@ -309,7 +316,7 @@ namespace Consopoly
             }
             return trades;
         }
-        static void trader_accepts(Player trader, int[] trader_gives, int[] trader_gets)
+        static void trader_accepts(ref Player trader, int[] trader_gives, int[] trader_gets)
         {
             int i = 0;
             Property[] temp = new Property[trader_gets.Length];
@@ -318,8 +325,8 @@ namespace Consopoly
             {
                 if (trade != 0)
                 {
-                    temp[i] = trader.Properties[trade];
-                    trader.Properties[trade] = null;
+                    temp[i] = game.Players[i].Properties[trade];
+                    game.Players[i].Properties[trade] = null;
                 }
                 i++;
             }
@@ -328,11 +335,11 @@ namespace Consopoly
                 int j = 0;
                 if (trade != 0)
                 {
-                    foreach (Property property in trader.Properties)
+                    foreach (Property property in game.Players[i].Properties)
                     {
                         if (property == null)
                         {
-                            trader.Properties[j] = game.CurrentPlayer.Properties[trade];
+                            game.Players[i].Properties[j] = game.CurrentPlayer.Properties[trade];
                             break;
                         }
                         j++;
@@ -362,24 +369,43 @@ namespace Consopoly
             string choice = "";
             short roll = 0;
 
-            input_is_valid(new string[] { "Would you like to leave jail or stay in Jail? [Leave/Stay]: " }, new string[] { "leave", "stay" }, ref choice);
+            get_input(new string[] { "Would you like to leave jail or stay in Jail? [Leave/Stay]: " }, new string[] { "leave", "stay" }, ref choice);
 
             if (choice.ToUpper() == "LEAVE")
             {
-                input_is_valid(new string[] { "Would you like to roll, pay, or use a get out of jail free card. [Roll/Pay/Card]: " }, new string[] { "roll", "pay", "card" }, ref choice);
-                if (choice == "ROLL")
+                get_input(new string[] { "Would you like to roll, pay, or use a get out of jail free card. [Roll/Pay/Card]: " }, new string[] { "roll", "pay", "card" }, ref choice);
+                if (choice.ToUpper() == "ROLL")
                 {
                     roll = game.RollDice(ref die_1, ref die_2);
 
-                    if (die_1.Value == die_2.Value)
+                    if (roll_is_doubles())
                     {
                         game.CurrentPlayer.GetOutOfJail();
                     }
                 }
+                else if (choice.ToUpper() == "PAY")
+                {
+                    game.CurrentPlayer.PayCash(50);
+                    game.BankPayin(50);
+                    game.CurrentPlayer.GetOutOfJail();
+                }
+                else if (choice.ToUpper() == "CARD")
+                {
+
+                }
+                else
+                {
+
+                }
             }
             else if (choice.ToUpper() == "STAY")
             {
+                get_input(new string[] { "Would you like to trade with another player or end your turn? [Trade/End]: " }, new string[] { "trade", "end" }, ref choice);
 
+                if (choice.ToUpper() == "TRADE")
+                {
+                    trade();
+                }
             }
             if (game.CurrentPlayer.IsInJail)
             {
@@ -405,7 +431,7 @@ namespace Consopoly
             }
             if (game.IsBankProperty())
             {
-                input_is_valid(new string[] { "Would you like to purchase this Property? [Y/N]: " }, new string[] { "y", "n" }, ref choice);
+                get_input(new string[] { "Would you like to purchase this Property? [Y/N]: " }, new string[] { "y", "n" }, ref choice);
 
                 // if yes
                 if (choice.ToUpper() == "Y")
@@ -422,19 +448,34 @@ namespace Consopoly
             }
         }
 
+        /// <summary>
+        /// checks if the value on both dice are the same
+        /// </summary>
+        /// <returns>returns true if both values are the same</returns>
         static bool roll_is_doubles()
         {
             return die_1.Value == die_2.Value;
         }
 
+        /// <summary>
+        /// gives all money, and properties the player owned to the player that bankrupted them
+        /// </summary>
+        /// <param name="bankrupter">the player that recieved rent from the current player</param>
         static void go_bankrupt(Player bankrupter)
         {
             game.CurrentPlayer = game.CurrentPlayer.FileBankruptcy(bankrupter);
         }
+        /// <summary>
+        /// moves the current player index to the next available not null array index
+        /// </summary>
         static void end_turn()
         {
             game.NextPlayer();
         }
+        /// <summary>
+        /// loops through current array of players and gets count of all positions that are not null
+        /// </summary>
+        /// <returns>returns the number of positions that are not null</returns>
         static short get_number_of_players_left()
         {
             short count = 0;
@@ -445,15 +486,28 @@ namespace Consopoly
         }
 
         // --- Console Commands --- \\
+        /// <summary>
+        /// prints a string to the console window, then sets a new line
+        /// </summary>
+        /// <param name="message">the message to print to the console window</param>
         static void print_to_console(string message)
         {
             Console.WriteLine(message);
         }
+        /// <summary>
+        /// clears all text from the console window
+        /// </summary>
         static void clear_console()
         {
             Console.Clear();
         }
-        static void input_is_valid (string[] messages, string[] options, ref string response)
+        /// <summary>
+        /// gets the input and validates it against an array of string options given. function will loop until user inputs something from the given array.
+        /// </summary>
+        /// <param name="messages">the input prompt to write on screen</param>
+        /// <param name="options">the array of options to choose input from</param>
+        /// <param name="response">the string variable that holds the choice given by reference</param>
+        static void get_input (string[] messages, string[] options, ref string response)
         {
             bool valid = false;
             do
@@ -471,6 +525,10 @@ namespace Consopoly
                 }
             } while (!valid);
         }
+        /// <summary>
+        /// reads input from the console window and places it into a variable called by reference
+        /// </summary>
+        /// <param name="response">the string variable by refernce holding the inputted text</param>
         static void read_from_console(ref string response)
         {
             response = Console.ReadLine();
