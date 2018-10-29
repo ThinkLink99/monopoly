@@ -437,6 +437,7 @@ namespace linkopoly_api
                 if (properties[i] == null)
                 {
                     properties[i] = property;
+                    break;
                 }
             }
 

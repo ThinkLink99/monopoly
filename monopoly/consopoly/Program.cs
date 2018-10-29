@@ -297,14 +297,14 @@ namespace Consopoly
             int i = 0;
             string choice = "";
             int[] trades = new int[0];
-            if (game.Players[i].Properties[0] != null)
+            if (trader.Properties[0] != null)
             {
-                print_to_console("Here is a list of all the items currently owned by " + game.Players[i].Name + ": ");
+                print_to_console("Here is a list of all the items currently owned by " + trader.Name + ": ");
 
                 print_to_console("Enter the number of each item you wish to trade. enter done when finished.");
 
                 i = 0;
-                foreach (Property property in game.Players[i].Properties)
+                foreach (Property property in trader.Properties)
                 {
                     if (property != null)
                         print_to_console(string.Concat("[", i, "]: ", property.Name));
@@ -461,7 +461,6 @@ namespace Consopoly
                 if (choice.ToUpper() == "Y")
                 {
                     Property property = ((PropertySpace)game.CurrentPlayer.Space).GetProperty(game);
-                    game.CurrentPlayer.BuyProperty(property);
                     game.GiveProperty(property, game.CurrentPlayer);
                     print_to_console("You bought " + property.Name + " for $" + property.Cost + "!");
                 }
