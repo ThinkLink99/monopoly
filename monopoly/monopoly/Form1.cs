@@ -507,6 +507,9 @@ namespace monopoly
                     valid = (response.ToUpper() == option.ToUpper());
                     if (valid) break;
                 }
+
+                //if (response.ToUpper() == "QUIT") Application.Exit(); break;
+
             } while (!valid);
         }
         /// <summary>
