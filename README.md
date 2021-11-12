@@ -1,4 +1,4 @@
-# Linkopoly
+# New Monopoly
 
 ## About the Project
 Linkopoly is a monopoly recreation project developed by Trey Hall ([ThinkLink99](http://www.github.com/thinklink99)) as a way for easier set up of an already long board game.
